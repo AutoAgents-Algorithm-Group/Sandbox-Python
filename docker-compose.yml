@@ -1,5 +1,5 @@
 # 自定义项目名称，影响镜像命名
-name: frank-sandbox
+name: sandbox-python
 
 services:
   # Python FastAPI 沙盒服务
@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: frank-sandbox
+    container_name: sandbox-python
     ports:
       - "8005:8005"  # API 服务端口
     environment:
@@ -17,7 +17,7 @@ services:
       - ./app.py:/app/app.py
     restart: unless-stopped
     networks:
-      - sandbox-network
+      - sandbox-python-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
       interval: 30s
@@ -26,10 +26,9 @@ services:
       start_period: 30s
 
 networks:
-  sandbox-network:
+  sandbox-python-network:
     driver: bridge
 
 volumes:
-  sandbox_data:
+  sandbox-python-data:
     driver: local
-      
