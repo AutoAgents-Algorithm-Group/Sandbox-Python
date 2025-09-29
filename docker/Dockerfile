@@ -14,13 +14,19 @@ RUN /opt/venv/bin/pip install --upgrade pip
 ENV PATH="/opt/venv/bin:$PATH"
 
 # 复制requirements.txt文件
-COPY requirements.txt .
+COPY backend/requirements.txt .
 
 # 在虚拟环境中安装Python依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制应用代码
-COPY app.py .
+COPY backend/api/main.py .
+
+# 复制启动脚本
+COPY docker/start.sh .
+
+# 设置启动脚本权限
+RUN chmod +x start.sh
 
 # 暴露端口
 EXPOSE 8005
@@ -29,5 +35,5 @@ EXPOSE 8005
 ENV PYTHONPATH=/app
 ENV VIRTUAL_ENV=/opt/venv
 
-# 运行应用（使用虚拟环境中的uvicorn）
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8005"]
+# 运行应用（使用启动脚本）
+CMD ["./start.sh"]

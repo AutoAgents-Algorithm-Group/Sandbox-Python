@@ -5,8 +5,8 @@ services:
   # Python FastAPI 沙盒服务
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: sandbox-python
     ports:
       - "8005:8005"  # API 服务端口
@@ -14,7 +14,7 @@ services:
       - PYTHONPATH=/app
       - PYTHON_ENV=production
     volumes:
-      - ./app.py:/app/app.py
+      - ../backend/api/main.py:/app/main.py
     restart: unless-stopped
     networks:
       - sandbox-python-network
