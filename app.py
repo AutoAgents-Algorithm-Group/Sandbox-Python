@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from autoagentsai.sandbox import LocalSandboxService
-from autoagentsai.utils.extractor import extract_python_code
+from autoagents_core.sandbox import LocalSandboxService
+from autoagents_core.utils.extractor import extract_python_code
 
 app = FastAPI(title="Frank Sandbox API", description="Frank Sandbox API", version="1.0.0")
 

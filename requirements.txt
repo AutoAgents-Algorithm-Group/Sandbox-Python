@@ -1,5 +1,6 @@
 fastapi
 uvicorn[standard]
 pydantic
-autoagentsai
+autoagents-graph
+autoagents-core
 bs4
