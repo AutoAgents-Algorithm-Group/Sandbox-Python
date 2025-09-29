@@ -19,20 +19,7 @@
 - [目录](#目录)
 - [为什么选择Sandbox-Python？](#为什么选择sandbox-python)
 - [快速开始](#快速开始)
-- [API文档](#api文档)
-  - [核心接口](#核心接口)
-    - [健康检查](#健康检查)
-    - [代码执行](#代码执行)
-  - [使用示例](#使用示例)
-    - [Python客户端](#python客户端)
-    - [cURL](#curl)
 - [部署](#部署)
-  - [项目结构](#项目结构)
-  - [使用场景](#使用场景)
-  - [配置说明](#配置说明)
-    - [环境变量](#环境变量)
-    - [端口配置](#端口配置)
-- [安全建议](#安全建议)
 - [贡献](#贡献)
 - [许可证](#许可证)
 
@@ -62,118 +49,12 @@ cd Sandbox-Python
 docker compose -f docker/docker-compose.yml up -d
 ```
 
-**本地开发**
-```bash
-# 1. 安装依赖
-pip install -r backend/requirements.txt
-
-# 2. 启动开发服务器
-cd backend/api
-uvicorn main:app --host 0.0.0.0 --port 8005 --reload
-```
-
-## API文档
-
-在以下地址访问交互式API文档：http://localhost:8005/docs
-
-### 核心接口
-
-#### 健康检查
-```http
-GET /health
-```
-
-**响应：**
-```json
-{
-  "message": "Frank Sandbox API is running"
-}
-```
-
-#### 代码执行
-```http
-POST /sandbox_run_code
-```
-
-**请求体：**
-```json
-{
-  "code": "print('Hello, World!')\nresult = 1 + 1\nprint(f'1 + 1 = {result}')"
-}
-```
-
-**响应：**
-```json
-{
-  "result": "Hello, World!\n1 + 1 = 2\n"
-}
-```
-
-### 使用示例
-
-#### Python客户端
-```python
-import requests
-
-# 远程执行Python代码
-url = "http://localhost:8005/sandbox_run_code"
-code = """
-import pandas as pd
-import numpy as np
-
-# 创建示例数据
-data = {'A': [1, 2, 3], 'B': [4, 5, 6]}
-df = pd.DataFrame(data)
-print("DataFrame:")
-print(df)
-
-# 计算统计信息
-print(f"\\nA列的和: {df['A'].sum()}")
-print(f"B列的均值: {df['B'].mean()}")
-"""
-
-response = requests.post(url, json={"code": code})
-result = response.json()
-print("执行结果:")
-print(result["result"])
-```
-
-#### cURL
-```bash
-curl -X POST "http://localhost:8005/sandbox_run_code" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "code": "for i in range(5):\n    print(f\"数字: {i}\")"
-  }'
-```
-
 ## 部署
 
 **Docker**
 ```bash
 cd Sandbox-Python
 docker compose -f docker/docker-compose.yml up -d
-```
-
-**生产环境**
-```yaml
-# docker-compose.prod.yml
-services:
-  sandbox-python:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    ports:
-      - "8005:8005"
-    environment:
-      - PYTHONPATH=/app
-      - PYTHON_ENV=production
-    restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
 ```
 
 **故障排除**
@@ -184,58 +65,7 @@ docker compose -f docker/docker-compose.yml logs -f app
 # 停止并删除容器
 docker stop sandbox-python && docker rm sandbox-python
 docker rmi sandbox-python-app
-
-# 重启服务
-docker compose -f docker/docker-compose.yml restart
 ```
-
-### 项目结构
-
-```
-Sandbox-Python/
-├── backend/
-│   ├── api/
-│   │   └── main.py          # FastAPI应用程序
-│   └── requirements.txt     # Python依赖
-├── docker/
-│   ├── Dockerfile          # 容器构建配置
-│   ├── docker-compose.yml  # 服务编排
-│   └── start.sh            # 应用启动脚本
-├── media/                  # 静态资源
-├── .gitignore             # Git忽略规则
-└── README.md              # 项目文档
-```
-
-### 使用场景
-
-- **AI代码生成**：安全验证LLM生成的Python代码
-- **数据分析助手**：为AI系统提供数据处理能力
-- **算法原型设计**：快速测试算法逻辑和性能
-- **教育工具**：在线Python代码教学和演示
-- **自动化测试**：代码质量检查和单元测试执行
-
-### 配置说明
-
-#### 环境变量
-
-| 变量名 | 默认值 | 说明 |
-|--------|--------|------|
-| `PYTHONPATH` | `/app` | Python模块搜索路径 |
-| `PYTHON_ENV` | `production` | Python运行环境 |
-
-#### 端口配置
-
-- **默认端口**：8005
-- **健康检查**：`/health`
-- **API文档**：`/docs`
-- **ReDoc文档**：`/redoc`
-
-## 安全建议
-
-- 在生产环境中使用反向代理（如Nginx）
-- 配置适当的资源限制
-- 定期更新依赖包
-- 监控沙盒执行时间和资源使用
 
 ## 贡献
 
