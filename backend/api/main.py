@@ -6,7 +6,8 @@ from autoagents_core.utils.extractor import extract_python_code
 app = FastAPI(title="Frank Sandbox API", description="Frank Sandbox API", version="1.0.0")
 
 class SandboxRequest(BaseModel):
-    code: str = "print('This is frank sandbox service')"
+    sdk_code: str
+    jwt_token: str
 
 class SandboxResponse(BaseModel):
     result: str
@@ -19,14 +20,14 @@ async def root():
 async def root():
     return {"message": "Frank Sandbox API is running"}
 
-@app.post("/sandbox_run_code", response_model=SandboxResponse)
+@app.post("/run_code", response_model=SandboxResponse)
 async def sandbox_run_code(request: SandboxRequest):
     """
     创建沙盒并运行代码
     """
     sandbox = LocalSandboxService()
-    code = extract_python_code(request.code)
-    result = sandbox.run_code(code=code)
+    sdk_code = extract_python_code(request.sdk_code).replace("jwt_token=\"\"", f"jwt_token=\"{request.jwt_token}\"")
+    result = sandbox.run_code(code=sdk_code)
     return SandboxResponse(result=str(result))
 
 
