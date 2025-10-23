@@ -14,6 +14,7 @@ class SandboxRequest(BaseModel):
 
 class SandboxResponse(BaseModel):
     result: str
+    workflow_id: Optional[str] = None
 
 
 
@@ -69,7 +70,7 @@ async def sandbox_run_code(request: SandboxRequest):
     sandbox = LocalSandboxService()
     sdk_code = extract_python_code(request.sdk_code).replace("jwt_token=\"\"", f"jwt_token=\"{request.jwt_token}\"")
     result = sandbox.run_code(code=sdk_code)
-    workflow_id = extract_workflow_id(result.stdout)
+    workflow_id = extract_workflow_id(result.get('stdout', ''))
     return SandboxResponse(result=str(result), workflow_id=workflow_id)
 
 

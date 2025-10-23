@@ -1,0 +1,7 @@
+POST http://localhost:8005/run_code
+Content-Type: application/json
+
+{
+    "sdk_code": "",
+    "jwt_token": "1234567890"
+}
